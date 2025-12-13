@@ -125,6 +125,39 @@ mod test {
 
         let dial_pos = count_zero_positions(input, true);
 
-        assert_eq!(dial_pos, 3);
+        assert_eq!(dial_pos, 6);
+    }
+
+    #[test]
+    fn part_2_r1000() {
+        let input = "R1000\n".to_string();
+
+        let dial_pos = count_zero_positions(input, true);
+
+        assert_eq!(dial_pos, 10);
+    }
+
+    #[test]
+    fn part_2_l150() {
+        let input = "L150\n".to_string();
+        let dial_pos = count_zero_positions(input, true);
+
+        assert_eq!(dial_pos, 2);
+    }
+
+    #[test]
+    fn part_2_l50_l100() {
+        let input = "L50\nL100\n".to_string();
+        let dial_pos = count_zero_positions(input, true);
+
+        assert_eq!(dial_pos, 2);
+    }
+
+    #[test]
+    fn part_2_l50_l50() {
+        let input = "L50\nL50\n".to_string();
+        let dial_pos = count_zero_positions(input, true);
+
+        assert_eq!(dial_pos, 1);
     }
 }

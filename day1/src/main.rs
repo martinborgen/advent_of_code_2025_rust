@@ -88,13 +88,30 @@ fn count_zero_positions(input: String, verbose: bool) -> i32 {
             println!("Dial pos: {}, Rotation: {}", dial_pos, dir * rotation);
         }
 
-        dial_pos = (dial_pos + dir * rotation) % 100;
-        if dial_pos < 0 {
-            dial_pos = (dial_pos + 100) % 100;
-        }
+        for _ in 0..rotation {
+            dial_pos += dir;
 
-        if dial_pos == 0 {
-            times_at_zero += 1;
+            if dial_pos >= 100 {
+                dial_pos = 0;
+
+                if verbose {
+                    println!("overflowed");
+                }
+            } else if dial_pos < 0 {
+                dial_pos += 100;
+
+                if verbose {
+                    println!("underflowed");
+                }
+            }
+
+            if dial_pos == 0 {
+                times_at_zero += 1;
+
+                if verbose {
+                    println!("At zero!")
+                }
+            }
         }
     }
 
@@ -159,5 +176,13 @@ mod test {
         let dial_pos = count_zero_positions(input, true);
 
         assert_eq!(dial_pos, 1);
+    }
+
+    #[test]
+    fn part_2_general() {
+        let input = "R50\nR100\n".to_string();
+        let dial_pos = count_zero_positions(input, true);
+
+        assert_eq!(dial_pos, 2);
     }
 }

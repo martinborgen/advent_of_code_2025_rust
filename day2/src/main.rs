@@ -32,7 +32,7 @@
 
 use std::num::ParseIntError;
 
-fn is_invalid_id(id: u64, verbose: bool) -> bool {
+fn is_invalid_id_part_1(id: u64, verbose: bool) -> bool {
     let id_str = id.to_string();
     let digits = id_str.len();
 
@@ -51,10 +51,48 @@ fn is_invalid_id(id: u64, verbose: bool) -> bool {
     is_invalid
 }
 
-fn find_invalid_ids(lower: u64, upper: u64, verbose: bool) -> u64 {
+fn is_invalid_id_part_2(id: u64, verbose: bool) -> bool {
+    let id_str = id.to_string();
+    let digits = id_str.len();
+
+    for n in 2..=digits {
+        let chunk_size = digits / n;
+        let id_chunks: Vec<String> = id_str
+            .chars()
+            .collect::<Vec<_>>()
+            .chunks(chunk_size)
+            .map(|chunk| chunk.iter().collect())
+            .collect();
+
+        if verbose {
+            println!("Checking {}, into chunks {:?}", id_str, id_chunks);
+        }
+
+        if id_chunks[id_chunks.len() - 1].len() != chunk_size {
+            continue;
+        }
+
+        for chunk in id_chunks[1..].iter() {
+            if *chunk == id_chunks[0] {
+                if verbose {
+                    println!("ID {} is invalid", id_str);
+                }
+                return true;
+            }
+        }
+    }
+
+    if verbose {
+        println!("ID {} is valid", id_str);
+    }
+
+    false
+}
+
+fn find_invalid_ids(lower: u64, upper: u64, validator: IDValidator, verbose: bool) -> u64 {
     let mut sum = 0;
     for n in lower..=upper {
-        if is_invalid_id(n, verbose) {
+        if validator(n, verbose) {
             sum += n;
         }
     }
@@ -69,7 +107,7 @@ fn parse_inputs(case: &str) -> Result<(u64, u64), ParseIntError> {
     Ok((low, high))
 }
 
-fn parse_ranges(input: String, verbose: bool) -> u64 {
+fn parse_ranges(input: String, validator: IDValidator, verbose: bool) -> u64 {
     let mut sum = 0;
     for case in input.split(',') {
         if case.is_empty() {
@@ -81,18 +119,26 @@ fn parse_ranges(input: String, verbose: bool) -> u64 {
             Err(e) => panic!("error parsing int, {}", e),
         };
 
-        let res = find_invalid_ids(low, high, verbose);
+        let res = find_invalid_ids(low, high, validator, verbose);
 
         sum += res;
     }
     sum
 }
 
+type IDValidator = fn(u64, bool) -> bool;
+
 fn main() {
     let input = std::fs::read_to_string("data/input").unwrap();
 
-    let sum = parse_ranges(input, false);
-    println!("sum: {}", sum);
+    let validator_part_1: IDValidator = is_invalid_id_part_1;
+    let validator_part_2: IDValidator = is_invalid_id_part_2;
+
+    let sum_part_1 = parse_ranges(input.clone(), validator_part_1, false);
+    println!("sum part 1: {}", sum_part_1);
+
+    let sum_part_2 = parse_ranges(input.clone(), validator_part_2, false);
+    println!("sum part 2: {}", sum_part_2);
 }
 
 #[cfg(test)]
@@ -101,19 +147,36 @@ mod test {
 
     #[test]
     fn is_invalid_id_test() {
-        assert!(is_invalid_id(11, false));
-        assert!(is_invalid_id(22, false));
-        assert!(is_invalid_id(1188511885, false));
+        assert!(is_invalid_id_part_1(11, false));
+        assert!(is_invalid_id_part_1(22, false));
+        assert!(is_invalid_id_part_1(1188511885, false));
 
-        assert!(!is_invalid_id(1011, false));
-        assert!(!is_invalid_id(1188611885, false));
+        assert!(!is_invalid_id_part_1(1011, false));
+        assert!(!is_invalid_id_part_1(1188611885, false));
     }
 
     #[test]
-    fn sample_input() {
+    fn sample_input_part_1() {
         let input = std::fs::read_to_string("data/sample_input").unwrap();
-
-        let sum = parse_ranges(input, true);
+        let validator: IDValidator = is_invalid_id_part_1;
+        let sum = parse_ranges(input, validator, true);
         assert_eq!(sum, 1227775554);
+    }
+
+    #[test]
+    fn part_2_invalid_check() {
+        assert_eq!(is_invalid_id_part_2(11, true), true);
+        assert_eq!(is_invalid_id_part_2(22, true), true);
+        assert_eq!(is_invalid_id_part_2(13, true), false);
+        assert_eq!(is_invalid_id_part_2(1188511885, true), true);
+        assert_eq!(is_invalid_id_part_2(1111111, true), true);
+    }
+
+    #[test]
+    fn sample_input_part_2() {
+        let input = std::fs::read_to_string("data/sample_input").unwrap();
+        let validator: IDValidator = is_invalid_id_part_2;
+        let sum = parse_ranges(input, validator, true);
+        assert_eq!(sum, 41743799265);
     }
 }

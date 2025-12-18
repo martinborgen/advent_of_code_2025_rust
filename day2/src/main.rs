@@ -96,13 +96,24 @@ fn is_invalid_id_part_2(id: u64, verbose: bool) -> bool {
             continue;
         }
 
+        let mut invalid = true;
+
         for chunk in id_chunks[1..].iter() {
-            if *chunk == id_chunks[0] {
-                if verbose {
-                    println!("ID {} is invalid", id_str);
-                }
-                return true;
+            if *chunk != id_chunks[0] {
+                invalid = false;
             }
+        }
+
+        if invalid {
+            if verbose {
+                println!(
+                    "ID {} is invalid, is {}, {} times",
+                    id_str,
+                    id_chunks[0],
+                    id_chunks.len()
+                );
+            }
+            return true;
         }
     }
 

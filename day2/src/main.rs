@@ -212,6 +212,6 @@ mod test {
         let input = std::fs::read_to_string("data/sample_input").unwrap();
         let validator: IDValidator = is_invalid_id_part_2;
         let sum = parse_ranges(input, validator, true);
-        assert_eq!(sum, 41743799265);
+        assert_eq!(sum, 4174379265);
     }
 }

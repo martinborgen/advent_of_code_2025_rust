@@ -71,8 +71,8 @@ fn count_roll_neighbours(board: &[Vec<char>], r: usize, c: usize, verbose: bool)
 
     if verbose {
         println!("{}:{} has {} neighboring rolls", r, c, count);
-        println!("range rows: [{}, {})", min_rows, max_rows);
-        println!("range cols: [{}, {})", min_cols, max_cols);
+        println!("range rows: [{}, {}]", min_rows, max_rows);
+        println!("range cols: [{}, {}]", min_cols, max_cols);
     }
     count - 1
 }
@@ -82,8 +82,12 @@ fn find_loose_rolls(board: Vec<Vec<char>>, verbose: bool) -> u32 {
 
     for (r, row) in board.iter().enumerate() {
         for (c, _) in row.iter().enumerate() {
+            if board[r][c] != '@' {
+                continue;
+            }
+
             let neighbour_count = count_roll_neighbours(&board, r, c, false);
-            if neighbour_count < 4 && board[r][c] == '@' {
+            if neighbour_count < 4 {
                 count += 1;
             }
 
@@ -97,8 +101,17 @@ fn find_loose_rolls(board: Vec<Vec<char>>, verbose: bool) -> u32 {
 }
 
 fn main() {
-    let tmp = read_board("data/sample_input");
-    println!("{:?}", tmp);
+    // let board = read_board("data/input");
+
+    let board = if let Ok(file) = read_board("data/input") {
+        file
+    } else {
+        println!("error reading input");
+        return;
+    };
+
+    let count_part_1 = find_loose_rolls(board, false);
+    println!("Loose rolls part 1: {}", count_part_1);
 }
 
 #[cfg(test)]

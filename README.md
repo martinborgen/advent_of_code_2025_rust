@@ -10,3 +10,6 @@ Not too difficult. Part 2 had a really dumb solution, but the problem is not to 
 ### day 2:
 My part 2 solution is pretty damn slow. It should be possible to make it much, much faster. 
 I believe it's because of repeatedly creating strings. 
+
+### day3: 
+Felt better about these solutions, they made more sense and were alright to implement. 

@@ -40,7 +40,7 @@ fn find_highest_digit(digit_string: &str, verbose: bool) -> Option<(usize, u32)>
     Some((highest_index, highest))
 }
 
-fn find_max_joltage_part_1(data: &str, verbose: bool) -> Option<u32> {
+fn find_max_joltage_part_1(data: &str, verbose: bool) -> Option<u64> {
     let left_idx;
     let left_digit;
     let right_digit;
@@ -70,7 +70,7 @@ fn find_max_joltage_part_1(data: &str, verbose: bool) -> Option<u32> {
         );
     }
 
-    Some(10 * left_digit + right_digit)
+    Some(10 * left_digit as u64 + right_digit as u64)
 }
 
 fn find_max_joltage_part_2(digit_string: &str, verbose: bool) -> Option<u64> {
@@ -103,7 +103,7 @@ fn find_max_joltage_part_2(digit_string: &str, verbose: bool) -> Option<u64> {
     Some(joltage)
 }
 
-fn get_total_joltage(data: &str, verbose: bool) -> u32 {
+fn get_total_joltage(data: &str, joltage_calculator: JoltageCalculator, verbose: bool) -> u64 {
     let mut sum = 0;
 
     for line in data.lines() {
@@ -111,7 +111,7 @@ fn get_total_joltage(data: &str, verbose: bool) -> u32 {
             continue;
         }
 
-        if let Some(joltage) = find_max_joltage_part_1(line, verbose) {
+        if let Some(joltage) = joltage_calculator(line, verbose) {
             sum += joltage;
         } else if verbose {
             println!("Error in find max joltage functoin returned 'None'");
@@ -121,6 +121,8 @@ fn get_total_joltage(data: &str, verbose: bool) -> u32 {
     sum
 }
 
+type JoltageCalculator = fn(&str, bool) -> Option<u64>;
+
 fn main() {
     let input = if let Ok(file) = std::fs::read_to_string("data/input") {
         file
@@ -129,8 +131,11 @@ fn main() {
         return;
     };
 
-    let joltage_part_1 = get_total_joltage(&input, false);
+    let joltage_part_1 = get_total_joltage(&input, find_max_joltage_part_1, false);
     println!("Joltage part 1: {}", joltage_part_1);
+
+    let joltage_part_2 = get_total_joltage(&input, find_max_joltage_part_2, false);
+    println!("Joltage part 2: {}", joltage_part_2);
 }
 
 #[cfg(test)]
@@ -154,7 +159,7 @@ mod test {
     #[test]
     fn test_sample_input_part_1() {
         let input = std::fs::read_to_string("data/sample_input").unwrap();
-        let res = get_total_joltage(&input, true);
+        let res = get_total_joltage(&input, find_max_joltage_part_1, true);
 
         assert_eq!(res, 357);
     }
@@ -165,5 +170,13 @@ mod test {
             find_max_joltage_part_2("234234234234278", true).unwrap(),
             434234234278
         );
+    }
+
+    #[test]
+    fn test_sample_input_part_2() {
+        let input = std::fs::read_to_string("data/sample_input").unwrap();
+        let res = get_total_joltage(&input, find_max_joltage_part_2, true);
+
+        assert_eq!(res, 3121910778619);
     }
 }

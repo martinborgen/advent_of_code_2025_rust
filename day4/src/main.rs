@@ -37,7 +37,11 @@
 fn read_board(filename: &str) -> Result<Vec<Vec<char>>, Box<dyn std::error::Error>> {
     let f = std::fs::read_to_string(filename)?;
 
-    let out = f.lines().map(|line| line.chars().collect()).collect();
+    let out = f
+        .lines()
+        .filter(|line| line.len() > 0)
+        .map(|line| line.chars().collect())
+        .collect();
 
     Ok(out)
 }

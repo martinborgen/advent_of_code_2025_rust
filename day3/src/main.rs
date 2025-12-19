@@ -24,7 +24,7 @@ fn find_highest_digit(digit_string: &str, verbose: bool) -> Option<(usize, u32)>
     let mut highest_index = 0;
     let mut highest: u32 = 0;
 
-    for (i, c) in digit_string[0..digit_string.len() - 1].chars().enumerate() {
+    for (i, c) in digit_string[0..digit_string.len()].chars().enumerate() {
         let d = c.to_digit(10)?;
 
         if d > highest {
@@ -43,18 +43,29 @@ fn find_highest_digit(digit_string: &str, verbose: bool) -> Option<(usize, u32)>
 fn find_max_joltage_part_1(data: &str, verbose: bool) -> u32 {
     let left_idx;
     let left_digit;
+    let right_digit;
 
-    if let Some(left) = find_highest_digit(data, false) {
+    if let Some(left) = find_highest_digit(&data[..data.len() - 1], false) {
         (left_idx, left_digit) = left;
     } else {
-        return 0;
+        left_digit = 0;
+        left_idx = 0;
     }
 
     if let Some(right) = find_highest_digit(&data[(left_idx + 1_usize)..], false) {
-        return left_digit * 10 + right.1;
+        right_digit = right.1;
     } else {
-        return 0;
+        right_digit = 0;
     }
+
+    if verbose {
+        println!(
+            "from {}, largest joltage is {}{}",
+            data, left_digit, right_digit
+        );
+    }
+
+    10 * left_digit + right_digit
 }
 
 fn get_total_joltage(data: &str, verbose: bool) -> u32 {
@@ -65,7 +76,7 @@ fn get_total_joltage(data: &str, verbose: bool) -> u32 {
             continue;
         }
 
-        sum += find_max_joltage_part_1(line, false);
+        sum += find_max_joltage_part_1(line, true);
     }
 
     sum

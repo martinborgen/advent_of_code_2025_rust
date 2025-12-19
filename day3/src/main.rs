@@ -73,6 +73,36 @@ fn find_max_joltage_part_1(data: &str, verbose: bool) -> Option<u32> {
     Some(10 * left_digit + right_digit)
 }
 
+fn find_max_joltage_part_2(digit_string: &str, verbose: bool) -> Option<u64> {
+    let digits = digit_string.len();
+    let mut digits_to_choose = 12;
+
+    let mut joltage = 0;
+
+    let mut old_idx = 0;
+
+    if verbose {
+        println!("Digits: {}", digit_string);
+    }
+
+    while digits_to_choose > 0 {
+        let working_str = &digit_string[old_idx..(digits + 1 - digits_to_choose)];
+
+        let (highest_idx, highest) = find_highest_digit(&working_str, false)?;
+        if verbose {
+            println!(
+                "Digits to choose: {}, currently evlauating {}. Chose: {}",
+                digits_to_choose, working_str, highest
+            );
+        }
+
+        joltage += 10_u64.pow(digits_to_choose as u32 - 1) * highest as u64;
+        digits_to_choose -= 1;
+        old_idx += highest_idx + 1;
+    }
+    Some(joltage)
+}
+
 fn get_total_joltage(data: &str, verbose: bool) -> u32 {
     let mut sum = 0;
 
@@ -127,5 +157,13 @@ mod test {
         let res = get_total_joltage(&input, true);
 
         assert_eq!(res, 357);
+    }
+
+    #[test]
+    fn test_find_max_joltage_part_2() {
+        assert_eq!(
+            find_max_joltage_part_2("234234234234278", true).unwrap(),
+            434234234278
+        );
     }
 }

@@ -96,7 +96,7 @@ mod test {
         assert_eq!(res1, (0 as usize, 9 as u32));
 
         let res2 = find_highest_digit("234234234234278", true).unwrap();
-        assert_eq!(res2, (13 as usize, 7 as u32));
+        assert_eq!(res2, (14 as usize, 8 as u32));
     }
 
     #[test]

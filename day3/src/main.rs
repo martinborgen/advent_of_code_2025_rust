@@ -40,7 +40,7 @@ fn find_highest_digit(digit_string: &str, verbose: bool) -> Option<(usize, u32)>
     Some((highest_index, highest))
 }
 
-fn find_max_joltage_part_1(data: &str, verbose: bool) -> u32 {
+fn find_max_joltage_part_1(data: &str, verbose: bool) -> Option<u32> {
     let left_idx;
     let left_digit;
     let right_digit;
@@ -48,14 +48,19 @@ fn find_max_joltage_part_1(data: &str, verbose: bool) -> u32 {
     if let Some(left) = find_highest_digit(&data[..data.len() - 1], false) {
         (left_idx, left_digit) = left;
     } else {
-        left_digit = 0;
-        left_idx = 0;
+        if verbose {
+            println!("error parsing digit");
+        }
+        return None;
     }
 
     if let Some(right) = find_highest_digit(&data[(left_idx + 1_usize)..], false) {
         right_digit = right.1;
     } else {
-        right_digit = 0;
+        if verbose {
+            println!("error parsing digit");
+        }
+        return None;
     }
 
     if verbose {
@@ -65,7 +70,7 @@ fn find_max_joltage_part_1(data: &str, verbose: bool) -> u32 {
         );
     }
 
-    10 * left_digit + right_digit
+    Some(10 * left_digit + right_digit)
 }
 
 fn get_total_joltage(data: &str, verbose: bool) -> u32 {
@@ -76,14 +81,26 @@ fn get_total_joltage(data: &str, verbose: bool) -> u32 {
             continue;
         }
 
-        sum += find_max_joltage_part_1(line, true);
+        if let Some(joltage) = find_max_joltage_part_1(line, verbose) {
+            sum += joltage;
+        } else if verbose {
+            println!("Error in find max joltage functoin returned 'None'");
+        }
     }
 
     sum
 }
 
 fn main() {
-    println!("Hello, world!");
+    let input = if let Ok(file) = std::fs::read_to_string("data/input") {
+        file
+    } else {
+        println!("error reading input");
+        return;
+    };
+
+    let joltage_part_1 = get_total_joltage(&input, false);
+    println!("Joltage part 1: {}", joltage_part_1);
 }
 
 #[cfg(test)]
@@ -101,7 +118,7 @@ mod test {
 
     #[test]
     fn test_find_max_joltage_part_1() {
-        assert_eq!(find_max_joltage_part_1("818181911112111", true), 92);
+        assert_eq!(find_max_joltage_part_1("818181911112111", true), Some(92));
     }
 
     #[test]

@@ -141,8 +141,11 @@ fn main() {
         return;
     };
 
-    let count_part_1 = find_loose_rolls(board, false);
+    let count_part_1 = find_loose_rolls(board.clone(), false);
     println!("Loose rolls part 1: {}", count_part_1);
+
+    let count_part_2 = remove_max_rolls(board, false);
+    println!("Removed rolls part 2: {}", count_part_2);
 }
 
 #[cfg(test)]

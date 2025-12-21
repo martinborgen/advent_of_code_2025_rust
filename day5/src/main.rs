@@ -73,6 +73,28 @@ impl FreshDataBase {
 
         FreshDataBase { data: database }
     }
+
+    pub fn get_total_fresh_count(self) -> u64 {
+        let mut count = Vec::new();
+
+        let mut old_upper = 0;
+        for r in self.data.iter() {
+            // doubtful this redicilous extend-contraption is any more efficient than simply pushing but wth I've made it and it semms to work
+            count.extend(vec![
+                false;
+                r.upper as usize
+                    - usize::min(r.lower as usize, old_upper)
+                    + 1
+            ]);
+            old_upper = r.upper as usize;
+
+            for i in r.lower..=r.upper {
+                count[i as usize] = true;
+            }
+        }
+
+        count.iter().filter(|x| **x).count() as u64
+    }
 }
 
 fn read_input(filename: &str) -> (String, String) {
@@ -163,5 +185,16 @@ mod test {
         let fresh_count = count_fresh(database, &ingredients);
 
         assert_eq!(fresh_count, 3);
+    }
+
+    #[test]
+    fn test_sample_input_part_2() {
+        let (fresh, ingredients) = read_input("data/sample_input");
+
+        let database = FreshDataBase::read_database(&fresh);
+
+        let fresh_count = database.get_total_fresh_count();
+
+        assert_eq!(fresh_count, 14);
     }
 }

@@ -78,7 +78,6 @@ impl FreshDataBase {
         }
 
         database.sort_by(|a, b| a.lower.cmp(&b.lower));
-        // database.sort();
 
         FreshDataBase { data: database }
     }
@@ -140,7 +139,7 @@ mod test {
 
     #[test]
     fn test_find_range() {
-        let (fresh, ingredients) = read_input("data/sample_input");
+        let (fresh, _ingredients) = read_input("data/sample_input");
 
         let database = FreshDataBase::read_database(&fresh);
 

@@ -112,7 +112,13 @@ fn count_fresh(database: FreshDataBase, ids: &str) -> u32 {
 }
 
 fn main() {
-    todo!()
+    let (fresh, ingredients) = read_input("data/input");
+
+    let database = FreshDataBase::read_database(&fresh);
+
+    let fresh_count = count_fresh(database, &ingredients);
+
+    println!("count day 1: {}", fresh_count);
 }
 
 #[cfg(test)]

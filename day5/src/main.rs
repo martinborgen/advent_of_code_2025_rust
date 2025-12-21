@@ -155,6 +155,11 @@ mod test {
         assert_eq!(database.is_fresh(11), true);
         assert_eq!(database.is_fresh(17), true);
         assert_eq!(database.is_fresh(32), false);
+
+        assert_eq!(database.is_fresh(18), true);
+        assert_eq!(database.is_fresh(19), false);
+        assert_eq!(database.is_fresh(20), true);
+        assert_eq!(database.is_fresh(21), false);
     }
 
     #[test]

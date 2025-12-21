@@ -48,31 +48,13 @@ impl FreshRange {
 
 impl FreshDataBase {
     pub fn is_fresh(&self, id: u64) -> bool {
-        let mut low = 0;
-        let mut mid = self.data.len() / 2;
-        let mut high = self.data.len() - 1;
-
-        while !self.data[mid].includes(id) && low + 1 != high {
-            if id < self.data[mid].lower {
-                high = mid;
-                mid = (low + high) / 2;
-            } else {
-                low = mid;
-                mid = (low + high) / 2;
-            }
-        }
-
-        let mut current = mid;
-        while self.data[current].lower <= id && current + 1 < self.data.len() {
-            if self.data[current].includes(id) {
+        for r in self.data.iter() {
+            if r.includes(id) {
                 return true;
-            } else {
-                current += 1;
             }
         }
 
-        // self.data[mid].includes(id)
-        self.data[current].includes(id)
+        false
     }
 
     pub fn read_database(fresh_string: &str) -> FreshDataBase {

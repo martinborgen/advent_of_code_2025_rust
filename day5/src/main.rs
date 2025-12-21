@@ -31,8 +31,8 @@
 
 #[derive(Debug, Clone)]
 struct FreshRange {
-    lower: u32,
-    upper: u32,
+    lower: u64,
+    upper: u64,
 }
 
 #[derive(Debug, Clone)]
@@ -41,13 +41,13 @@ struct FreshDataBase {
 }
 
 impl FreshRange {
-    fn includes(&self, other: u32) -> bool {
+    fn includes(&self, other: u64) -> bool {
         other >= self.lower && other <= self.upper
     }
 }
 
 impl FreshDataBase {
-    pub fn is_fresh(&self, id: u32) -> bool {
+    pub fn is_fresh(&self, id: u64) -> bool {
         let mut low = 0;
         let mut mid = self.data.len() / 2;
         let mut high = self.data.len() - 1;

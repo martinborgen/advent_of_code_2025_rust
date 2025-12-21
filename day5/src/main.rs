@@ -62,7 +62,17 @@ impl FreshDataBase {
             }
         }
 
-        self.data[mid].includes(id)
+        let mut current = mid;
+        while self.data[current].lower <= id && current + 1 < self.data.len() {
+            if self.data[current].includes(id) {
+                return true;
+            } else {
+                current += 1;
+            }
+        }
+
+        // self.data[mid].includes(id)
+        self.data[current].includes(id)
     }
 
     pub fn read_database(fresh_string: &str) -> FreshDataBase {
@@ -157,7 +167,7 @@ mod test {
         assert_eq!(database.is_fresh(32), false);
 
         assert_eq!(database.is_fresh(18), true);
-        assert_eq!(database.is_fresh(19), false);
+        assert_eq!(database.is_fresh(19), true);
         assert_eq!(database.is_fresh(20), true);
         assert_eq!(database.is_fresh(21), false);
     }

@@ -90,9 +90,9 @@ impl FreshDataBase {
 
         let mut i = 1;
         while i < database.len() {
-            if database[i - 1].upper > database[i].upper {
+            if database[i - 1].upper >= database[i].upper {
                 database.remove(i);
-            } else if database[i - 1].upper > database[i].lower {
+            } else if database[i - 1].upper >= database[i].lower {
                 database[i - 1].upper = database[i].upper;
                 database.remove(i);
             } else {
@@ -207,7 +207,7 @@ mod test {
 
     #[test]
     fn test_sample_input_part_2() {
-        let (fresh, ingredients) = read_input("data/sample_input");
+        let (fresh, _ingredients) = read_input("data/sample_input");
 
         let database = FreshDataBase::read_database(&fresh);
 

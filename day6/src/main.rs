@@ -1,4 +1,4 @@
-fn transpose_input(input: String) -> Vec<Vec<String>> {
+fn transpose_input_part_1(input: String) -> Vec<Vec<String>> {
     let input_array: Vec<Vec<String>> = input
         .lines()
         .map(|line| line.split_whitespace().map(|s| s.to_string()).collect())
@@ -16,7 +16,7 @@ fn transpose_input(input: String) -> Vec<Vec<String>> {
     out
 }
 
-fn compute(input: &[String]) -> u64 {
+fn compute_part_1(input: &[String]) -> u64 {
     assert!(!input.is_empty());
     let operator = input
         .last()
@@ -39,11 +39,11 @@ fn compute(input: &[String]) -> u64 {
 fn main() {
     let raw_input = std::fs::read_to_string("data/input").expect("Error reading input");
 
-    let input = transpose_input(raw_input);
+    let input = transpose_input_part_1(raw_input);
 
     let mut res_part_1 = 0;
     for i in input {
-        res_part_1 += compute(&i);
+        res_part_1 += compute_part_1(&i);
     }
 
     println!("result part 1: {}", res_part_1);
@@ -57,13 +57,13 @@ mod test {
     fn test_sample_input() {
         let raw_input = std::fs::read_to_string("data/sample_input").expect("Error reading input");
 
-        let input = transpose_input(raw_input);
+        let input = transpose_input_part_1(raw_input);
         assert!(!input.is_empty());
 
-        let res1 = compute(&input[0]);
-        let res2 = compute(&input[1]);
-        let res3 = compute(&input[2]);
-        let res4 = compute(&input[3]);
+        let res1 = compute_part_1(&input[0]);
+        let res2 = compute_part_1(&input[1]);
+        let res3 = compute_part_1(&input[2]);
+        let res4 = compute_part_1(&input[3]);
 
         assert_eq!(res1, 33210);
         assert_eq!(res2, 490);

@@ -29,6 +29,23 @@
 
 // Process the database file from the new inventory management system. How many of the available ingredient IDs are fresh?
 
+// --- Part Two ---
+
+// The Elves start bringing their spoiled inventory to the trash chute at the back of the kitchen.
+
+// So that they can stop bugging you when they get new inventory, the Elves would like to know all of the IDs that the fresh ingredient ID ranges consider to be fresh. An ingredient ID is still considered fresh if it is in any range.
+
+// Now, the second section of the database (the available ingredient IDs) is irrelevant. Here are the fresh ingredient ID ranges from the above example:
+
+// 3-5
+// 10-14
+// 16-20
+// 12-18
+
+// The ingredient IDs that these ranges consider to be fresh are 3, 4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, and 20. So, in this example, the fresh ingredient ID ranges consider a total of 14 ingredient IDs to be fresh.
+
+// Process the database file again. How many ingredient IDs are considered to be fresh according to the fresh ingredient ID ranges?
+
 #[derive(Debug, Clone)]
 struct FreshRange {
     lower: u64,
@@ -71,29 +88,30 @@ impl FreshDataBase {
 
         database.sort_by(|a, b| a.lower.cmp(&b.lower));
 
+        let mut i = 1;
+        while i < database.len() {
+            if database[i - 1].upper > database[i].upper {
+                database.remove(i);
+            } else if database[i - 1].upper > database[i].lower {
+                database[i - 1].upper = database[i].upper;
+                database.remove(i);
+            } else {
+                i += 1;
+            }
+        }
+
         FreshDataBase { data: database }
     }
 
     pub fn get_total_fresh_count(self) -> u64 {
-        let mut count = Vec::new();
+        let mut count: u64 = 0;
 
-        let mut old_upper = 0;
-        for r in self.data.iter() {
-            // doubtful this redicilous extend-contraption is any more efficient than simply pushing but wth I've made it and it semms to work
-            count.extend(vec![
-                false;
-                r.upper as usize
-                    - usize::min(r.lower as usize, old_upper)
-                    + 1
-            ]);
-            old_upper = r.upper as usize;
-
-            for i in r.lower..=r.upper {
-                count[i as usize] = true;
-            }
+        for fresh_range in self.data {
+            let add = fresh_range.upper - fresh_range.lower + 1;
+            count += add;
         }
 
-        count.iter().filter(|x| **x).count() as u64
+        count
     }
 }
 
@@ -108,7 +126,7 @@ fn read_input(filename: &str) -> (String, String) {
     (fresh_ranges.to_string(), ingredients.to_string())
 }
 
-fn count_fresh(database: FreshDataBase, ids: &str) -> u32 {
+fn count_fresh(database: &FreshDataBase, ids: &str) -> u32 {
     let mut count = 0;
 
     for id in ids.lines() {
@@ -130,9 +148,12 @@ fn main() {
 
     let database = FreshDataBase::read_database(&fresh);
 
-    let fresh_count = count_fresh(database, &ingredients);
+    let fresh_count = count_fresh(&database, &ingredients);
 
-    println!("count day 1: {}", fresh_count);
+    println!("count part 1: {}", fresh_count);
+
+    let total_fresh_possible_part_2 = database.get_total_fresh_count();
+    println!("count part 2: {}", total_fresh_possible_part_2);
 }
 
 #[cfg(test)]
@@ -150,11 +171,8 @@ mod test {
         assert_eq!(database.data[0].lower, 3);
         assert_eq!(database.data[0].upper, 5);
         assert_eq!(database.data[1].lower, 10);
-        assert_eq!(database.data[1].upper, 14);
-        assert_eq!(database.data[2].lower, 12);
-        assert_eq!(database.data[2].upper, 18);
-        assert_eq!(database.data[3].lower, 16);
-        assert_eq!(database.data[3].upper, 20);
+        assert_eq!(database.data[1].upper, 20);
+        assert_eq!(database.data.len(), 2);
     }
 
     #[test]
@@ -182,7 +200,7 @@ mod test {
 
         let database = FreshDataBase::read_database(&fresh);
 
-        let fresh_count = count_fresh(database, &ingredients);
+        let fresh_count = count_fresh(&database, &ingredients);
 
         assert_eq!(fresh_count, 3);
     }

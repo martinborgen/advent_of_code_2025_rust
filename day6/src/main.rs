@@ -1,17 +1,16 @@
 fn transpose_input(input: String) -> Vec<Vec<String>> {
-    let input: Vec<Vec<String>> = input
+    let input_array: Vec<Vec<String>> = input
         .lines()
         .map(|line| line.split_whitespace().map(|s| s.to_string()).collect())
         .collect();
 
     let mut out: Vec<Vec<String>> = Vec::new();
-    for i in 0..input.len() {
-        assert_eq!(input.len(), input[i].len());
-
-        out.push(Vec::new());
-        for j in 0..input[i].len() {
-            out[i].push(input[j][i].clone());
+    for col in 0..input_array[0].len() {
+        let mut column = Vec::new();
+        for row in 0..input_array.len() {
+            column.push(input_array[row][col].clone());
         }
+        out.push(column);
     }
 
     out
